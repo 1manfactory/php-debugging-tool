@@ -1,5 +1,5 @@
 <?php
-// Überprüfen, ob das Skript im CLI-Modus läuft oder ob ein AJAX-Call mit JSON-Ausgabe erfolgt
+// Check if the script is running in CLI mode or if it is an AJAX call with JSON response
 if (php_sapi_name() !== 'cli' && (!isset($_SERVER['HTTP_ACCEPT']) || stripos($_SERVER['HTTP_ACCEPT'], 'application/json') === false)) {
     // Error and Exception Handling
     function handleErrors($errno, $errstr, $errfile, $errline) {
@@ -15,12 +15,88 @@ if (php_sapi_name() !== 'cli' && (!isset($_SERVER['HTTP_ACCEPT']) || stripos($_S
 
     $start_time = microtime(true);
     $start_memory = memory_get_usage();
+
+    // Start a session if not already started
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    // Export debug information if requested
+    if (isset($_GET['export_debug']) && $_GET['export_debug'] == '1') {
+        ob_start();
+        // Generate the debug information
+        ?>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>Debug Information</title>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css">
+        </head>
+        <body>
+            <?php
+            function debug_var($var_name, $var_value, $level = 0) {
+                if (is_array($var_value) || is_object($var_value)) {
+                    echo "<h2>$var_name:</h2>";
+                    echo "<pre class='language-php'><code class='language-php'>" . print_r($var_value, true) . "</code></pre>";
+                } else {
+                    echo "<h2>$var_name:</h2>";
+                    echo '<pre class="language-php"><code class="language-php">' . print_r($var_value, true) . '</pre></code>';
+                }
+            }
+
+            function debug_message($message) {
+                echo "<div>$message</div>";
+            }
+
+            // GET Variables
+            debug_var('GET Variables', $_GET);
+
+            // POST Variables
+            debug_var('POST Variables', $_POST);
+
+            // SESSION Variables
+            debug_var('SESSION Variables', $_SESSION);
+
+            // COOKIE Variables
+            debug_var('COOKIE Variables', $_COOKIE);
+
+            // SERVER Variables
+            debug_var('SERVER Variables', $_SERVER);
+
+            // Custom defined variables
+            foreach ($GLOBALS as $key => $value) {
+                if (!in_array($key, array('_GET', '_POST', '_COOKIE', '_FILES', '_SERVER', '_REQUEST', '_ENV', '_SESSION', 'GLOBALS'))) {
+                    debug_var($key, $value);
+                }
+            }
+
+            $end_time = microtime(true);
+            $end_memory = memory_get_usage();
+            $execution_time = $end_time - $start_time;
+            $memory_used = $end_memory - $start_memory;
+
+            echo "<div><strong>Execution Time:</strong> " . round($execution_time, 4) . " seconds</div>";
+            echo "<div><strong>Memory Usage:</strong> " . round($memory_used / 1024, 2) . " KB</div>";
+            ?>
+        </body>
+        </html>
+        <?php
+        $content = ob_get_clean();
+        header('Content-Type: text/html');
+        header('Content-Disposition: attachment; filename="debug_info.html"');
+        echo $content;
+        exit;
+    }
+
+    // Get the last filter value from a cookie
+    $last_filter = isset($_COOKIE['debug_last_filter']) ? $_COOKIE['debug_last_filter'] : '';
     ?>
     <!DOCTYPE html>
-    <html lang="de">
+    <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Debug-Informationen</title>
+        <title>Debug Information</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css">
         <style>
             #debug-toggle {
@@ -65,9 +141,6 @@ if (php_sapi_name() !== 'cli' && (!isset($_SERVER['HTTP_ACCEPT']) || stripos($_S
                 padding: 10px;
                 box-sizing: border-box;
             }
-            .filter-buttons {
-                margin-bottom: 10px;
-            }
             .debug-error, .debug-info, .debug-message {
                 z-index: 1000000;
             }
@@ -75,20 +148,12 @@ if (php_sapi_name() !== 'cli' && (!isset($_SERVER['HTTP_ACCEPT']) || stripos($_S
     </head>
     <body>
         <div id="debug-toggle">
-            <img src="https://img.icons8.com/ios-filled/50/ffffff/bug.png" alt="Debug anzeigen/verstecken"/>
+            <img src="https://img.icons8.com/ios-filled/50/ffffff/bug.png" alt="Toggle Debug"/>
         </div>
         <div id="debug-info">
-            <input type="text" id="search-input" class="search-input" placeholder="Suche...">
-            <div class="filter-buttons">
-                <button onclick="filterDebug('all')">Alle</button>
-                <button onclick="filterDebug('GET-Variablen')">GET</button>
-                <button onclick="filterDebug('POST-Variablen')">POST</button>
-                <button onclick="filterDebug('SESSION-Variablen')">SESSION</button>
-                <button onclick="filterDebug('COOKIE-Variablen')">COOKIE</button>
-                <button onclick="filterDebug('SERVER-Variablen')">SERVER</button>
-            </div>
+            <input type="text" id="search-input" class="search-input" placeholder="Search..." value="<?php echo htmlspecialchars($last_filter); ?>">
             <?php
-            // Funktion zum rekursiven Debuggen von Variablen
+            // Function to recursively debug variables
             function debug_var($var_name, $var_value, $level = 0) {
                 static $id_counter = 0;
                 $id_counter++;
@@ -107,23 +172,22 @@ if (php_sapi_name() !== 'cli' && (!isset($_SERVER['HTTP_ACCEPT']) || stripos($_S
                 echo "<div class='debug-message'>$message</div>";
             }
 
-            // GET-Variablen
-            debug_var('GET-Variablen', $_GET);
+            // GET Variables
+            debug_var('GET Variables', $_GET);
 
-            // POST-Variablen
-            debug_var('POST-Variablen', $_POST);
+            // POST Variables
+            debug_var('POST Variables', $_POST);
 
-            // SESSION-Variablen
-            session_start();
-            debug_var('SESSION-Variablen', $_SESSION);
+            // SESSION Variables
+            debug_var('SESSION Variables', $_SESSION);
 
-            // COOKIE-Variablen
-            debug_var('COOKIE-Variablen', $_COOKIE);
+            // COOKIE Variables
+            debug_var('COOKIE Variables', $_COOKIE);
 
-            // SERVER-Variablen
-            debug_var('SERVER-Variablen', $_SERVER);
+            // SERVER Variables
+            debug_var('SERVER Variables', $_SERVER);
 
-            // Eigens definierte Variablen
+            // Custom defined variables
             foreach ($GLOBALS as $key => $value) {
                 if (!in_array($key, array('_GET', '_POST', '_COOKIE', '_FILES', '_SERVER', '_REQUEST', '_ENV', '_SESSION', 'GLOBALS'))) {
                     debug_var($key, $value);
@@ -135,11 +199,11 @@ if (php_sapi_name() !== 'cli' && (!isset($_SERVER['HTTP_ACCEPT']) || stripos($_S
             $execution_time = $end_time - $start_time;
             $memory_used = $end_memory - $start_memory;
 
-            echo "<div class='debug-info'><strong>Ausführungszeit:</strong> " . round($execution_time, 4) . " Sekunden</div>";
-            echo "<div class='debug-info'><strong>Speicherverbrauch:</strong> " . round($memory_used / 1024, 2) . " KB</div>";
+            echo "<div class='debug-info'><strong>Execution Time:</strong> " . round($execution_time, 4) . " seconds</div>";
+            echo "<div class='debug-info'><strong>Memory Usage:</strong> " . round($memory_used / 1024, 2) . " KB</div>";
             ?>
-            <form method="get">
-                <button type="submit" name="export_debug" value="1">Debug-Informationen exportieren</button>
+            <form method="get" target="_blank">
+                <button type="submit" name="export_debug" value="1">Export Debug Information</button>
             </form>
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
@@ -169,27 +233,38 @@ if (php_sapi_name() !== 'cli' && (!isset($_SERVER['HTTP_ACCEPT']) || stripos($_S
 
             document.getElementById('search-input').addEventListener('input', function() {
                 var filter = this.value.toLowerCase();
+                setCookie('debug_last_filter', filter, 7);
+                applyFilter(filter);
+            });
+
+            function setCookie(name, value, days) {
+                var expires = "";
+                if (days) {
+                    var date = new Date();
+                    date.setTime(date.getTime() + (days*24*60*60*1000));
+                    expires = "; expires=" + date.toUTCString();
+                }
+                document.cookie = name + "=" + (value || "")  + expires + "; path=/; SameSite=Lax";
+            }
+
+            function getCookie(name) {
+                var nameEQ = name + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0;i < ca.length;i++) {
+                    var c = ca[i];
+                    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+                }
+                return null;
+            }
+
+            function applyFilter(filter) {
                 var headers = document.getElementsByClassName('debug-header');
                 var sections = document.getElementsByClassName('debug-section');
                 for (var i = 0; i < headers.length; i++) {
                     var header = headers[i];
                     var content = header.nextElementSibling;
-                    if (header.innerText.toLowerCase().indexOf(filter) > -1 || sections[i].innerText.toLowerCase().indexOf(filter) > -1) {
-                        header.style.display = '';
-                        if (content) content.style.display = '';
-                    } else {
-                        header.style.display = 'none';
-                        if (content) content.style.display = 'none';
-                    }
-                }
-            });
-
-            function filterDebug(type) {
-                var headers = document.getElementsByClassName('debug-header');
-                for (var i = 0; i < headers.length; i++) {
-                    var header = headers[i];
-                    var content = header.nextElementSibling;
-                    if (type === 'all' || header.getAttribute('data-type') === type) {
+                    if (header.getAttribute('data-type').toLowerCase().indexOf(filter) > -1 || (sections[i] && sections[i].innerText.toLowerCase().indexOf(filter) > -1)) {
                         header.style.display = '';
                         if (content) content.style.display = '';
                     } else {
@@ -198,6 +273,18 @@ if (php_sapi_name() !== 'cli' && (!isset($_SERVER['HTTP_ACCEPT']) || stripos($_S
                     }
                 }
             }
+
+            // Apply the last used filter from cookie
+            window.onload = function() {
+                var lastFilter = getCookie('debug_last_filter');
+                if (lastFilter) {
+                    applyFilter(lastFilter);
+                    document.getElementById('search-input').value = lastFilter;
+                } else {
+                    applyFilter('');
+                    document.getElementById('search-input').value = '';
+                }
+            };
         </script>
     </body>
     </html>
