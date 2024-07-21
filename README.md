@@ -1,4 +1,3 @@
-```markdown
 # PHP Debugging Tool
 
 A comprehensive PHP debugging tool that helps you to debug your PHP applications directly in the browser. This tool includes error and exception handling, performance information, and the ability to filter and search through debugging information. It also features syntax highlighting and an option to export the debug information as an HTML file.
@@ -63,4 +62,3 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the code of conduc
 - **Usage**: Basic usage instructions, including how to include the script and export debug information.
 - **Full Code**: The complete PHP debugging script.
 - **License, Contributing, and Acknowledgments**: Standard sections for open-source projects on GitHub.
-
