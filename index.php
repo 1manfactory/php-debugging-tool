@@ -1,9 +1,6 @@
 <?php
-include 'path/to/debug.php'; // Include the debugging tool
-
 // Start a session
 session_start();
-
 // Set some test variables
 $_SESSION['username'] = 'demo_user';
 $_SESSION['email'] = 'demo@example.com';
@@ -15,9 +12,6 @@ $_SERVER['REQUEST_TIME'] = time();
 // Custom variables
 $testArray = array('apple', 'banana', 'cherry');
 $testObject = (object) array('name' => 'John Doe', 'age' => 30, 'email' => 'john.doe@example.com');
-
-// Function to add a custom debug message
-debug_message('This is a custom debug message for demonstration purposes.');
 
 // HTML content for demonstration
 ?>
@@ -38,3 +32,6 @@ debug_message('This is a custom debug message for demonstration purposes.');
     <p>More content...</p>
 </body>
 </html>
+<?php
+include 'debug.php'; // Include the debugging tool
+?>
