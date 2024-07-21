@@ -2,6 +2,10 @@
 
 This PHP debugging tool helps developers to debug their applications by providing detailed information about GET, POST, SESSION, COOKIE, SERVER variables, and custom variables. It includes features to display debug information in a collapsible section and export the debug information as an HTML file.
 
+## Screenshots
+
+![image](https://github.com/user-attachments/assets/550e902f-c68c-4144-a5ae-35bee3a7890d)
+
 ## Features
 
 - Display GET, POST, SESSION, COOKIE, SERVER variables.
