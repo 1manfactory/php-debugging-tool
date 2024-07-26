@@ -1,20 +1,3 @@
-<?php
-// Start a session
-session_start();
-// Set some test variables
-$_SESSION['username'] = 'demo_user';
-$_SESSION['email'] = 'demo@example.com';
-$_GET['page'] = 'home';
-$_POST['submit'] = 'Submit';
-$_COOKIE['user'] = 'cookie_user';
-$_SERVER['REQUEST_TIME'] = time();
-
-// Custom variables
-$testArray = array('apple', 'banana', 'cherry');
-$testObject = (object) array('name' => 'John Doe', 'age' => 30, 'email' => 'john.doe@example.com');
-
-// HTML content for demonstration
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,8 +13,23 @@ $testObject = (object) array('name' => 'John Doe', 'age' => 30, 'email' => 'john
     </form>
     <p>Some content on the page...</p>
     <p>More content...</p>
+
+    <?php
+    // Include the debug script
+    include '.debug.php';
+
+    // Example variables
+    $_SESSION['username'] = 'demo_user';
+    $_GET['page'] = 'home';
+    $_POST['submit'] = 'Submit';
+    $_COOKIE['user'] = 'cookie_user';
+    $_SERVER['REQUEST_TIME'] = time();
+
+    // Add a custom debug message
+    debug_message('This is a custom debug message for demonstration purposes.');
+
+    // Display debug information
+    showDebugInfo();
+    ?>
 </body>
 </html>
-<?php
-include 'debug.php'; // Include the debugging tool
-?>
