@@ -16,7 +16,7 @@
 
     <?php
     // Include the debug script
-    include '.debug.php';
+    include 'debug.php';
 
     // Example variables
     $_SESSION['username'] = 'demo_user';
