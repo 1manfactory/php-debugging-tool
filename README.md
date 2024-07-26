@@ -1,33 +1,26 @@
 # PHP Debugging Tool
 
-This PHP debugging tool helps developers to debug their applications by providing detailed information about GET, POST, SESSION, COOKIE, SERVER variables, and custom variables. It includes features to display debug information in a collapsible section and export the debug information as an HTML file.
-
-## Screenshots
-
-![image](https://github.com/user-attachments/assets/550e902f-c68c-4144-a5ae-35bee3a7890d)
+A simple PHP debugging tool to display various PHP variables such as GET, POST, SESSION, COOKIE, and SERVER variables. It also provides error and exception handling, and allows exporting the debug information as an HTML file.
 
 ## Features
 
-- Display GET, POST, SESSION, COOKIE, SERVER variables.
-- Custom variables can also be displayed.
-- Collapsible sections for better readability.
-- Filter functionality to search through the debug information.
+- Display GET, POST, SESSION, COOKIE, and SERVER variables.
+- Error and exception handling.
 - Export debug information as an HTML file.
+- Toggle debug information visibility.
+- Filter debug information using a search box.
 
 ## Installation
 
 1. Clone the repository or download the `debug.php` file.
-
-2. Include the `debug.php` file in your PHP project:
-    ```php
-    include 'path/to/debug.php';
-    ```
+2. Include `debug.php` in your main PHP script before any output is generated.
 
 ## Usage
 
-### Basic Usage
+### Including the Debugging Tool
 
-Include the `debug.php` file at the beginning of your PHP file:
+Include the `debug.php` file at the beginning of your main PHP script:
+
 ```php
 <?php
 include 'path/to/debug.php';
@@ -36,40 +29,28 @@ include 'path/to/debug.php';
 
 ### Displaying Debug Information
 
-By default, the debug information will be displayed in a hidden section. To view the debug information, click the bug icon in the top-right corner of the page.
+Call the `showDebugInfo()` function at the end of your main PHP script to display the debug information:
 
-### Filtering Debug Information
-
-Use the search input field to filter the debug information. The filter value is saved in a cookie and applied automatically when the page is reloaded.
-
-### Exporting Debug Information
-
-To export the debug information as an HTML file, click the "Export Debug Information" button. The debug information will be generated and downloaded as an HTML file.
-
-### Example
-
-Here is an example `index.php` file demonstrating the usage of the debugging tool:
 ```php
 <?php
-include 'path/to/debug.php'; // Include the debugging tool
-
-// Set some test variables
+// Example variables
 $_SESSION['username'] = 'demo_user';
-$_SESSION['email'] = 'demo@example.com';
 $_GET['page'] = 'home';
 $_POST['submit'] = 'Submit';
 $_COOKIE['user'] = 'cookie_user';
 $_SERVER['REQUEST_TIME'] = time();
 
-// Custom variables
-$testArray = array('apple', 'banana', 'cherry');
-$testObject = (object) array('name' => 'John Doe', 'age' => 30, 'email' => 'john.doe@example.com');
-
-// Function to add a custom debug message
+// Add a custom debug message
 debug_message('This is a custom debug message for demonstration purposes.');
 
-// HTML content for demonstration
+// Display debug information
+showDebugInfo();
 ?>
+```
+
+### HTML Example
+
+```php
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,27 +66,50 @@ debug_message('This is a custom debug message for demonstration purposes.');
     </form>
     <p>Some content on the page...</p>
     <p>More content...</p>
+
+    <?php
+    // Include the debug script
+    include 'path/to/debug.php';
+
+    // Example variables
+    $_SESSION['username'] = 'demo_user';
+    $_GET['page'] = 'home';
+    $_POST['submit'] = 'Submit';
+    $_COOKIE['user'] = 'cookie_user';
+    $_SERVER['REQUEST_TIME'] = time();
+
+    // Add a custom debug message
+    debug_message('This is a custom debug message for demonstration purposes.');
+
+    // Display debug information
+    showDebugInfo();
+    ?>
 </body>
 </html>
+```
+
+## Functions
+
+### `debug_message($message)`
+
+Add a custom debug message to be displayed.
+
+- `$message` (string): The message to be displayed.
+
+### `showDebugInfo()`
+
+Displays the debug information at the point where it is called. It should be called at the end of your script to ensure all variables are captured.
+
+## Exporting Debug Information
+
+To export the debug information as an HTML file, append `?export_debug=1` to the URL in your browser.
+
+Example:
+
+```
+http://yourdomain.com/yourscript.php?export_debug=1
 ```
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contributing
-
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the code of conduct, and the process for submitting pull requests.
-
-## Acknowledgments
-
-- Icon made by [Icons8](https://icons8.com/) from [Icons8](https://icons8.com/)
-- Syntax highlighting by [Prism.js](https://prismjs.com/)
-
-### Explanation
-
-- **Title and Introduction**: Provides an overview of the project and its features.
-- **Installation**: Instructions for cloning the repository and including the debug script in PHP files.
-- **Usage**: Basic usage instructions, including how to include the script, display debug information, filter it, and export it.
-- **Example**: Provides an example `index.php` file to demonstrate the usage of the tool.
-- **License, Contributing, and Acknowledgments**: Standard sections for open-source projects on GitHub.
