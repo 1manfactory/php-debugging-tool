@@ -13,10 +13,7 @@ A simple PHP debugging tool to display various PHP variables such as GET, POST, 
 
 ## Screenshots
 
-![image](https://github.com/user-attachments/assets/44e546d7-150b-46b1-a34b-0054bd669356)
-
-
-
+![image](https://github.com/user-attachments/assets/7ad77460-3f09-47ff-8948-7576136f1394)
 
 ## Installation
 
