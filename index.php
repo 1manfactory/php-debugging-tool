@@ -1,21 +1,3 @@
-<?php
-// Main Script
-
-// Include the debug script
-include 'path/to/debug.php';
-
-// Beispielvariablen
-$_SESSION['username'] = 'demo_user';
-$_GET['page'] = 'home';
-$_POST['submit'] = 'Submit';
-$_COOKIE['user'] = 'cookie_user';
-$_SERVER['REQUEST_TIME'] = time();
-
-// Custom Debug Message
-debug_message('This is a custom debug message for demonstration purposes.');
-
-// HTML-
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,7 +15,20 @@ debug_message('This is a custom debug message for demonstration purposes.');
     <p>More content...</p>
 
     <?php
-    // Show debug information at the end of the script
+    // Include the debug script
+    include 'path/to/debug.php';
+
+    // Example variables
+    $_SESSION['username'] = 'demo_user';
+    $_GET['page'] = 'home';
+    $_POST['submit'] = 'Submit';
+    $_COOKIE['user'] = 'cookie_user';
+    $_SERVER['REQUEST_TIME'] = time();
+
+    // Add a custom debug message
+    debug_message('This is a custom debug message for demonstration purposes.');
+
+    // Display debug information
     showDebugInfo();
     ?>
 </body>
