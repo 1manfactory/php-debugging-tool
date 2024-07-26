@@ -11,6 +11,13 @@ A simple PHP debugging tool to display various PHP variables such as GET, POST, 
 - Filter debug information using a search box.
 - Automatically disabled in production environments.
 
+## Screenshots
+
+![image](https://github.com/user-attachments/assets/44e546d7-150b-46b1-a34b-0054bd669356)
+
+
+
+
 ## Installation
 
 1. Clone the repository or download the `debug.php` file.
