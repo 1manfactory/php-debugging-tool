@@ -9,11 +9,22 @@ A simple PHP debugging tool to display various PHP variables such as GET, POST, 
 - Export debug information as an HTML file.
 - Toggle debug information visibility.
 - Filter debug information using a search box.
+- Automatically disabled in production environments.
 
 ## Installation
 
 1. Clone the repository or download the `debug.php` file.
-2. Include `debug.php` in your main PHP script before any output is generated.
+2. Create an empty `.env_dev` file in the same directory as `debug.php` to enable debugging.
+
+### Enabling Debugging
+
+**Create an `.env_dev` file in the same directory as `debug.php`**:
+
+```sh
+touch .env_dev
+```
+
+3. Include `debug.php` in your main PHP script before any output is generated.
 
 ## Usage
 
@@ -29,7 +40,7 @@ include 'path/to/debug.php';
 
 ### Displaying Debug Information
 
-Call the `showDebugInfo()` function at the end of your main PHP script to display the debug information:
+Call the `showDebugInfo()` function at the end of your main PHP script to display the debug information. This function will do nothing in production environments:
 
 ```php
 <?php
@@ -98,7 +109,7 @@ Add a custom debug message to be displayed.
 
 ### `showDebugInfo()`
 
-Displays the debug information at the point where it is called. It should be called at the end of your script to ensure all variables are captured.
+Displays the debug information at the point where it is called. It should be called at the end of your script to ensure all variables are captured. In production environments, this function does nothing.
 
 ## Exporting Debug Information
 
